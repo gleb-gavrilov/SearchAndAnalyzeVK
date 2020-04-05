@@ -32,6 +32,7 @@ def main():
     build_graphic(data)
 
 
+# build graphic
 def build_graphic(data):
     x = []
     y = []
