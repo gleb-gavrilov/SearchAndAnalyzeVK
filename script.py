@@ -5,6 +5,7 @@ import json
 import plotly.graph_objects as go
 
 
+# main
 def main():
     tokenVk = 'MY_TOKEN_VK'
     url = 'https://api.vk.com/method/newsfeed.search'
