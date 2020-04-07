@@ -47,7 +47,7 @@ def build_graphic(data):
     fig.show()
 
 
-def get_dates(start_day=1, end_day=5):
+def get_dates(start_day=1, end_day=11):
     dates = []
     while start_day < end_day:
         today = datetime.date.today() - datetime.timedelta(days=start_day-1)
