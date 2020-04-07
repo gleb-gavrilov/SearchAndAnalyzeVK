@@ -1,22 +1,29 @@
 import requests
 import datetime
-import pprint
-import json
+import logging
 import plotly.graph_objects as go
 
+logging.basicConfig(level=logging.INFO)
 
-# main
+
 def main():
-    tokenVk = 'MY_TOKEN_VK'
+    token_vk = 'MY_VK_TOKEN'
     url = 'https://api.vk.com/method/newsfeed.search'
-    keyword = 'кока-кола'
+    keyword = 'python junior'
     dates = get_dates()
     data = []
     for date in dates:
-        response = requests.get(url + '?q=' + keyword + '&count=10&start_time=' + str(date['start_time']) + '&end_time=' + str(date['end_time']) + '&access_token=' + tokenVk + '&v=5.103')
-        if response.status_code == 200:
-            content = response.content
-            content = json.loads(content)
+        params = {
+            'q': keyword,
+            'count': 10,
+            'start_time': str(date['start_time']),
+            'end_time': str(date['end_time']),
+            'access_token': token_vk,
+            'v': '5.103'
+        }
+        response = requests.get(url, params=params)
+        if response.ok:
+            content = response.json()
             data.append({
                 'start_time': date['start_time'],
                 'end_time': date['end_time'],
@@ -24,28 +31,23 @@ def main():
                 'start_human_date': date['start_human_date'],
                 'end_human_date': date['end_human_date']
             })
-            print(date['start_human_date'], 'was processed ')
-            print('#'*30)
+            logging.info('{} {}'.format(str(date['start_human_date']), 'was processed'))
+            logging.info('#' * 30)
         else:
-            print(date['start_human_date'], 'fail processed ')
-            print('#'*30)
-    # pprint.pprint(data)
+            logging.info('{} {}'.format(str(date['start_human_date']), 'fail processed'))
+            logging.info('#' * 30)
     build_graphic(data)
 
 
-# build graphic!
 def build_graphic(data):
-    x = []
-    y = []
-    for item in data:
-        x.append(item['start_human_date'])
-        y.append(item['count'])
+    x = [i['start_human_date'] for i in data]
+    y = [i['count'] for i in data]
+
     fig = go.Figure([go.Bar(x=x, y=y)])
     fig.show()
 
 
-# default -10 days
-def get_dates(start_day=1, end_day=11):
+def get_dates(start_day=1, end_day=5):
     dates = []
     while start_day < end_day:
         today = datetime.date.today() - datetime.timedelta(days=start_day-1)
